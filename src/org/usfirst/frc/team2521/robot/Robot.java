@@ -2,7 +2,10 @@
 package org.usfirst.frc.team2521.robot;
 
 import edu.wpi.first.wpilibj.ADXL362;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -16,6 +19,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends IterativeRobot {
 	
 	ADXL362 adxl;
+	ADXRS450_Gyro adxrs;
+	
+	private Joystick stick;
+	
+	private JoystickButton resetButton;
 	
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -23,6 +31,12 @@ public class Robot extends IterativeRobot {
 	 */
 	public void robotInit() {
 		adxl = new ADXL362(Accelerometer.Range.k2G);
+		adxrs = new ADXRS450_Gyro();
+		
+		stick = new Joystick(0);
+		resetButton = new JoystickButton(stick, 1);
+		
+		adxrs.calibrate();
 	}
 	
 	/**
@@ -48,9 +62,15 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during operator control
 	 */
 	public void teleopPeriodic() {
+		if (resetButton.get()) {
+			adxrs.reset();
+		}
+		
 		SmartDashboard.putNumber("ADXL getX()", adxl.getX());
 		SmartDashboard.putNumber("ADXL getY()", adxl.getY());
 		SmartDashboard.putNumber("ADXL getZ()", adxl.getZ());
+		SmartDashboard.putNumber("ADXRS getAngle()", adxrs.getAngle());
+		SmartDashboard.putNumber("ADXRS getRate()", adxrs.getRate());
 	}
 	
 	/**
